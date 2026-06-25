@@ -214,6 +214,7 @@ export default function ScanScreen() {
           <Text style={styles.tipText}>• Good lighting — avoid glare</Text>
           <Text style={styles.tipText}>• Lay card flat on a dark surface</Text>
           <Text style={styles.tipText}>• Make sure text is legible</Text>
+          {!isFront && <Text style={styles.tipText}>• Make sure the © year in the bottom corner is visible — this is how we get the correct card year</Text>}
         </View>
       </View>
     );

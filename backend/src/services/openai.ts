@@ -35,8 +35,8 @@ export async function recognizeCard(frontBase64: string, backBase64?: string): P
   }
 
   const yearInstruction = backBase64
-    ? 'IMPORTANT for "year": look at the BACK image. Find the copyright symbol (©) — it appears in the bottom-left or bottom-right corner of the card back. Extract the 4-digit year immediately following the © symbol (e.g. "© 2021" → "2021"). Do NOT use any other year from the card.'
-    : 'For "year": find the copyright symbol © and extract the 4-digit year after it. Otherwise use the printed year on the card front.';
+    ? `CRITICAL RULE FOR "year": You MUST use the copyright year from the back of the card. Look at the bottom-left and bottom-right corners of the BACK image (image 2) for the copyright notice — it looks like "© 2025 Topps" or "©2025 Panini". Extract ONLY the 4-digit year from that © symbol. This is the definitive card year. IGNORE any other numbers or years you see anywhere else on the card (stats, dates, etc.). If you cannot find a © year on the back, then use the large year printed on the card front.`
+    : 'For "year": find the copyright symbol © and extract the 4-digit year immediately after it. If not visible, use the year prominently printed on the card front.';
 
   msgContent.push({
     type: 'text',
