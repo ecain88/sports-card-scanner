@@ -120,7 +120,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!res?.tokens) return;
 
       tokenRef.current = res.tokens.token;
-      _storedToken = res.tokens.token;
       refreshRef.current = res.tokens.refreshToken ?? null;
       await storeTokens(res.tokens);
       convex.setAuth(fetchAccessToken, () => {});
@@ -136,7 +135,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await httpClient.action(authSignOut, {});
     } catch {}
     tokenRef.current = null;
-    _storedToken = null;
     refreshRef.current = null;
     await clearTokens();
     convex.clearAuth();
