@@ -79,10 +79,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             return res.tokens.token;
           }
         } catch {}
+        // Refresh failed — clear in-memory refs but keep SecureStore intact.
+        // The existing JWT may still be valid; let the server decide.
         tokenRef.current = null;
-
         refreshRef.current = null;
-        await clearTokens();
         return null;
       }
       return tokenRef.current;
