@@ -1,12 +1,14 @@
 import { ConvexHttpClient } from "convex/browser";
-import { convex, CONVEX_URL } from "./convex";
-import { getStoredToken } from "./auth";
+import * as SecureStore from "expo-secure-store";
+import { CONVEX_URL } from "./convex";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import { CardDetails, EbaySalesResult } from "./api";
 
-function authedHttp(): ConvexHttpClient {
-  const token = getStoredToken();
+const JWT_KEY = "__convexAuthJWT";
+
+async function authedHttp(): Promise<ConvexHttpClient> {
+  const token = await SecureStore.getItemAsync(JWT_KEY);
   if (!token) throw new Error("Not authenticated");
   const client = new ConvexHttpClient(CONVEX_URL);
   client.setAuth(token);
@@ -49,7 +51,7 @@ export interface SaleListingRow {
 }
 
 export async function getCollection(): Promise<SavedCard[]> {
-  const result = await authedHttp().query(api.cards.getCollection, {});
+  const result = await (await authedHttp()).query(api.cards.getCollection, {});
   return (result ?? []) as SavedCard[];
 }
 
@@ -57,7 +59,7 @@ export async function saveCard(
   cardDetails: CardDetails,
   salesData: EbaySalesResult
 ): Promise<Id<"cards">> {
-  return await authedHttp().mutation(api.cards.saveCard, {
+  return await (await authedHttp()).mutation(api.cards.saveCard, {
     playerName: cardDetails.playerName,
     year: cardDetails.year,
     brand: cardDetails.brand,
@@ -85,7 +87,7 @@ export async function uploadCardImage(
   const FileSystem = await import("expo-file-system");
 
   // 1. Get a presigned upload URL from Convex storage
-  const uploadUrl = await authedHttp().mutation(api.cards.generateUploadUrl, {});
+  const uploadUrl = await (await authedHttp()).mutation(api.cards.generateUploadUrl, {});
 
   // 2. Read file as base64 then convert to binary
   const base64 = await FileSystem.readAsStringAsync(localUri, {
@@ -105,14 +107,14 @@ export async function uploadCardImage(
   };
 
   // 4. Link storageId to the card record
-  await authedHttp().mutation(api.cards.updateCardImage, { cardId, storageId });
+  await (await authedHttp()).mutation(api.cards.updateCardImage, { cardId, storageId });
 }
 
 export async function updateCardSales(
   cardId: Id<"cards">,
   salesData: EbaySalesResult
 ): Promise<void> {
-  await authedHttp().mutation(api.cards.updateCardSales, {
+  await (await authedHttp()).mutation(api.cards.updateCardSales, {
     cardId,
     avgPrice: salesData.averagePrice,
     lowPrice: salesData.lowestPrice,
@@ -125,5 +127,5 @@ export async function updateCardSales(
 }
 
 export async function deleteCard(cardId: Id<"cards">): Promise<void> {
-  await authedHttp().mutation(api.cards.deleteCard, { cardId });
+  await (await authedHttp()).mutation(api.cards.deleteCard, { cardId });
 }

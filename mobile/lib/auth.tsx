@@ -38,13 +38,6 @@ export interface AuthHookState {
   fetchAccessToken: (opts: { forceRefreshToken: boolean }) => Promise<string | null>;
 }
 
-// Module-level token accessor so non-React code (lib/cards.ts) can get the token
-// without depending on React hooks or the WebSocket auth state.
-let _storedToken: string | null = null;
-export function getStoredToken(): string | null {
-  return _storedToken;
-}
-
 const AuthActionsCtx = createContext<AuthActions | undefined>(undefined);
 const AuthStateCtx = createContext<AuthHookState>({
   isLoading: true,
@@ -80,14 +73,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           })) as SignInResult;
           if (res?.tokens) {
             tokenRef.current = res.tokens.token;
-            _storedToken = res.tokens.token;
+
             refreshRef.current = res.tokens.refreshToken ?? null;
             await storeTokens(res.tokens);
             return res.tokens.token;
           }
         } catch {}
         tokenRef.current = null;
-        _storedToken = null;
+
         refreshRef.current = null;
         await clearTokens();
         return null;
@@ -106,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         ]);
         if (jwt) {
           tokenRef.current = jwt;
-          _storedToken = jwt;
+
           refreshRef.current = refresh ?? null;
           convex.setAuth(fetchAccessToken, () => {});
           setIsAuthenticated(true);
