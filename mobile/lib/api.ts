@@ -27,6 +27,8 @@ export interface EbaySalesResult {
   lowestPrice: number;
   highestPrice: number;
   totalSales: number;
+  lastSalePrice: number;
+  lastSaleDate: string;
 }
 
 export interface ScanResult {

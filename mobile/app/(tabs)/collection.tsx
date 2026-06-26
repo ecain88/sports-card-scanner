@@ -18,6 +18,8 @@ type CardRow = {
   sport: string;
   grade: string;
   avgPrice: number;
+  lastSalePrice?: number;
+  lastSaleDate?: string;
   imageUrl: string | null;
 };
 
@@ -124,9 +126,20 @@ export default function CollectionScreen() {
               <Text style={styles.cardPlayer} numberOfLines={1}>{item.playerName}</Text>
               <Text style={styles.cardMeta}>{item.year} · {item.brand}</Text>
               {item.grade !== "Raw" && <Text style={styles.cardGrade}>{item.grade}</Text>}
-              <Text style={styles.cardPrice}>
-                {item.avgPrice ? `$${item.avgPrice.toFixed(2)} avg` : "No data"}
-              </Text>
+              {(item.lastSalePrice ?? 0) > 0 ? (
+                <>
+                  <Text style={styles.cardPrice}>${(item.lastSalePrice ?? 0).toFixed(2)} last sale</Text>
+                  {item.lastSaleDate ? (
+                    <Text style={styles.cardSaleDate}>
+                      {new Date(item.lastSaleDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: '2-digit' })}
+                    </Text>
+                  ) : null}
+                </>
+              ) : (
+                <Text style={styles.cardPrice}>
+                  {item.avgPrice ? `$${item.avgPrice.toFixed(2)} avg` : "No data"}
+                </Text>
+              )}
             </View>
           </TouchableOpacity>
         )}
@@ -168,4 +181,5 @@ const styles = StyleSheet.create({
   cardMeta: { color: "#64748b", fontSize: 12, marginTop: 2 },
   cardGrade: { color: "#f59e0b", fontSize: 12, fontWeight: "600", marginTop: 2 },
   cardPrice: { color: "#22c55e", fontSize: 13, fontWeight: "700", marginTop: 4 },
+  cardSaleDate: { color: "#475569", fontSize: 11, marginTop: 1 },
 });

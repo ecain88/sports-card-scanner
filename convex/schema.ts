@@ -29,6 +29,8 @@ export default defineSchema({
     lowPrice: v.number(),
     highPrice: v.number(),
     totalSales: v.number(),
+    lastSalePrice: v.optional(v.number()),
+    lastSaleDate: v.optional(v.string()),
     saleListings: v.array(saleListingValidator),
   }).index("by_user", ["userId"]),
 });

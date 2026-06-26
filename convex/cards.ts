@@ -55,6 +55,8 @@ export const saveCard = mutation({
     lowPrice: v.number(),
     highPrice: v.number(),
     totalSales: v.number(),
+    lastSalePrice: v.optional(v.number()),
+    lastSaleDate: v.optional(v.string()),
     saleListings: v.array(
       v.object({
         title: v.string(),
@@ -108,6 +110,8 @@ export const updateCardSales = mutation({
     lowPrice: v.number(),
     highPrice: v.number(),
     totalSales: v.number(),
+    lastSalePrice: v.optional(v.number()),
+    lastSaleDate: v.optional(v.string()),
     saleListings: v.array(
       v.object({
         title: v.string(),

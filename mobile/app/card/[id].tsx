@@ -88,6 +88,18 @@ export default function CardDetailScreen() {
       {card.variation ? <Text style={styles.variation}>{card.variation}</Text> : null}
       {card.grade !== "Raw" && <Text style={styles.grade}>{card.grade}</Text>}
 
+      {(card.lastSalePrice ?? 0) > 0 && (
+        <View style={styles.lastSaleBox}>
+          <Text style={styles.lastSaleLabel}>Last Sale Comp</Text>
+          <Text style={styles.lastSalePrice}>${(card.lastSalePrice ?? 0).toFixed(2)}</Text>
+          {card.lastSaleDate ? (
+            <Text style={styles.lastSaleDate}>
+              {new Date(card.lastSaleDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+            </Text>
+          ) : null}
+        </View>
+      )}
+
       <View style={styles.priceGrid}>
         <PriceStat label="Average" value={card.avgPrice} accent="#3b82f6" />
         <PriceStat label="Lowest" value={card.lowPrice} accent="#22c55e" />
@@ -183,6 +195,10 @@ const styles = StyleSheet.create({
   cardMeta: { fontSize: 15, color: "#64748b", textAlign: "center", marginTop: 6 },
   variation: { fontSize: 14, color: "#8b5cf6", textAlign: "center", fontWeight: "600", marginTop: 4 },
   grade: { fontSize: 14, color: "#f59e0b", textAlign: "center", fontWeight: "600", marginTop: 4 },
+  lastSaleBox: { marginHorizontal: 16, marginTop: 20, marginBottom: 8, backgroundColor: "#0c2340", borderRadius: 14, paddingVertical: 16, paddingHorizontal: 20, borderWidth: 1, borderColor: "#1d4ed8", alignItems: "center" },
+  lastSaleLabel: { fontSize: 11, fontWeight: "700", color: "#60a5fa", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 },
+  lastSalePrice: { fontSize: 36, fontWeight: "900", color: "#f1f5f9" },
+  lastSaleDate: { fontSize: 13, color: "#60a5fa", marginTop: 2 },
   priceGrid: { flexDirection: "row", justifyContent: "space-around", marginVertical: 24, marginHorizontal: 16, backgroundColor: "#1e293b", borderRadius: 14, paddingVertical: 20, borderWidth: 1, borderColor: "#334155" },
   priceStat: { alignItems: "center" },
   priceValue: { fontSize: 22, fontWeight: "800" },

@@ -25,6 +25,8 @@ export interface SavedCard {
   lowPrice: number;
   highPrice: number;
   totalSales: number;
+  lastSalePrice?: number;
+  lastSaleDate?: string;
   saleListings: SaleListingRow[];
 }
 
@@ -60,6 +62,8 @@ export async function saveCard(
     lowPrice: salesData.lowestPrice,
     highPrice: salesData.highestPrice,
     totalSales: salesData.totalSales,
+    lastSalePrice: salesData.lastSalePrice,
+    lastSaleDate: salesData.lastSaleDate,
     saleListings: salesData.listings,
   });
 }
@@ -104,6 +108,8 @@ export async function updateCardSales(
     lowPrice: salesData.lowestPrice,
     highPrice: salesData.highestPrice,
     totalSales: salesData.totalSales,
+    lastSalePrice: salesData.lastSalePrice,
+    lastSaleDate: salesData.lastSaleDate,
     saleListings: salesData.listings,
   });
 }

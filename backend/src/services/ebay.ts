@@ -20,6 +20,8 @@ export interface EbaySalesResult {
   lowestPrice: number;
   highestPrice: number;
   totalSales: number;
+  lastSalePrice: number;
+  lastSaleDate: string;
 }
 
 export async function fetchCompletedSales(searchQuery: string, limit = 20): Promise<EbaySalesResult> {
@@ -91,11 +93,14 @@ export async function fetchCompletedSales(searchQuery: string, limit = 20): Prom
     .filter((l) => l.salePrice > 0);
 
   if (listings.length === 0) {
-    return { listings: [], averagePrice: 0, lowestPrice: 0, highestPrice: 0, totalSales: 0 };
+    return { listings: [], averagePrice: 0, lowestPrice: 0, highestPrice: 0, totalSales: 0, lastSalePrice: 0, lastSaleDate: '' };
   }
 
   const prices = listings.map((l) => l.salePrice);
   const averagePrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+
+  // listings[0] is the most recently ended sale (sortOrder=EndTimeSoonest)
+  const lastSale = listings[0];
 
   return {
     listings,
@@ -103,5 +108,7 @@ export async function fetchCompletedSales(searchQuery: string, limit = 20): Prom
     lowestPrice: Math.min(...prices),
     highestPrice: Math.max(...prices),
     totalSales: listings.length,
+    lastSalePrice: lastSale.salePrice,
+    lastSaleDate: lastSale.saleDate,
   };
 }
