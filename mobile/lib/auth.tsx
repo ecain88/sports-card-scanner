@@ -111,11 +111,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = useCallback(
     async (provider: string, params: Record<string, unknown>) => {
-      const res = (await http().action(authSignIn, {
-        provider,
-        params,
-        verifier: undefined,
-      })) as SignInResult;
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Sign in timed out — server did not respond. Please try again.")), 15000)
+      );
+      const res = (await Promise.race([
+        http().action(authSignIn, { provider, params, verifier: undefined }),
+        timeout,
+      ])) as SignInResult;
 
       if (!res?.tokens) return;
 
