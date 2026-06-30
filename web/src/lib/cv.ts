@@ -10,40 +10,28 @@
 import type { Rect } from "./centering";
 import { orderCorners, rectFromCorners, isLikelyBorderless, type Point } from "./geometry";
 
-// OpenCV.js attaches a global `cv`. We type it loosely; the math is tested elsewhere.
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  interface Window { cv?: any }
-}
+/* OpenCV is bundled as @techstark/opencv-js (wasm embedded) and dynamically
+ * imported on first use, so it's served same-origin from our own deploy (no CDN,
+ * no CORS) and cached by the service worker. We type it loosely; the centering
+ * math is tested separately. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let cvPromise: Promise<any> | null = null;
 
-const OPENCV_URL = "https://docs.opencv.org/4.10.0/opencv.js";
-let loadPromise: Promise<void> | null = null;
-
-/** Lazy-load OpenCV.js once. Resolves when the runtime is initialized. */
-export function loadOpenCv(): Promise<void> {
-  if (loadPromise) return loadPromise;
-  loadPromise = new Promise<void>((resolve, reject) => {
-    if (window.cv?.Mat) {
-      resolve();
-      return;
+/** Lazy-load OpenCV once and resolve when the WASM runtime is initialized. */
+export function loadOpenCv(): Promise<unknown> {
+  if (cvPromise) return cvPromise;
+  cvPromise = (async () => {
+    const mod = await import("@techstark/opencv-js");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cv: any = (mod as any).default ?? mod;
+    if (!cv?.Mat) {
+      await new Promise<void>((resolve) => {
+        cv.onRuntimeInitialized = () => resolve();
+      });
     }
-    const script = document.createElement("script");
-    script.src = OPENCV_URL;
-    script.async = true;
-    script.onload = () => {
-      const cv = window.cv;
-      if (!cv) {
-        reject(new Error("OpenCV failed to load"));
-        return;
-      }
-      // OpenCV sets onRuntimeInitialized when WASM is ready.
-      if (cv.Mat) resolve();
-      else cv.onRuntimeInitialized = () => resolve();
-    };
-    script.onerror = () => reject(new Error("Could not load OpenCV.js"));
-    document.head.appendChild(script);
-  });
-  return loadPromise;
+    return cv;
+  })();
+  return cvPromise;
 }
 
 export interface DetectionResult {
@@ -83,8 +71,8 @@ function largestQuad(cv: any, contours: any): { points: Point[]; area: number } 
  * Returns confidence so the UI can decide whether to ask for a manual nudge.
  */
 export async function detectCardRects(image: ImageData): Promise<DetectionResult> {
-  await loadOpenCv();
-  const cv = window.cv;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cv: any = await loadOpenCv();
   if (!cv) throw new Error("OpenCV unavailable");
 
   const src = cv.matFromImageData(image);

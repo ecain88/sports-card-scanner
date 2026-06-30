@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.71",
+    "@techstark/opencv-js": "^4.10.0-release.1",
     "convex": "^1.17.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
