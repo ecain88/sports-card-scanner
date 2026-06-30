@@ -13,6 +13,7 @@ const DEFAULT_INNER = (w: number, h: number): Rect => ({ left: w * 0.14, top: h 
 export function ScanPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
+  const [rawFile, setRawFile] = useState<File | null>(null);
   const [outer, setOuter] = useState<Rect | null>(null);
   const [inner, setInner] = useState<Rect | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
@@ -22,6 +23,7 @@ export function ScanPage() {
   function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    setRawFile(file);
     const image = new Image();
     image.onload = () => {
       setImg(image);
@@ -52,16 +54,11 @@ export function ScanPage() {
   }, [img, outer, inner]);
 
   async function autoDetect() {
-    const canvas = canvasRef.current;
-    if (!canvas || !img) return;
+    if (!rawFile || !img) return;
     setDetecting(true);
     setDetectError(null);
     try {
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("no canvas context");
-      ctx.drawImage(img, 0, 0);
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const result = await detectCardRects(data);
+      const result = await detectCardRects(rawFile, img.width, img.height);
       setOuter(result.outer);
       setInner(result.inner);
       setConfidence(result.confidence);

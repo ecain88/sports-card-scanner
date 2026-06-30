@@ -2,8 +2,8 @@ import { action } from "./_generated/server";
 import { v } from "convex/values";
 
 /**
- * Card identification via GPT-4o Vision. This is the IDENTIFICATION pipeline only —
- * it never measures centering (that runs client-side via OpenCV.js). It extracts
+ * Card identification via GPT-4.1 Vision. This is the IDENTIFICATION pipeline only —
+ * it never measures centering (that runs server-side via convex/borders.ts). It extracts
  * the card's metadata and an eBay-optimized search string.
  *
  * Uses the OpenAI REST API via fetch so it runs in Convex's default runtime with
@@ -66,7 +66,7 @@ Return only valid JSON.`,
       res = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-        body: JSON.stringify({ model: "gpt-4o", max_tokens: 500, messages: [{ role: "user", content }] }),
+        body: JSON.stringify({ model: "gpt-4.1", max_tokens: 500, messages: [{ role: "user", content }] }),
       });
     } catch (err) {
       return { ok: false, error: `OpenAI request failed: ${err instanceof Error ? err.message : String(err)}` };

@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.71",
-    "@techstark/opencv-js": "^4.10.0-release.1",
     "convex": "^1.17.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -23,6 +22,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "jpeg-js": "^0.4.4",
     "typescript": "^5.5.4",
     "vite": "^5.4.0",
     "vite-plugin-pwa": "^0.20.1",

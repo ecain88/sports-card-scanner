@@ -1,9 +1,8 @@
 /**
  * Pure geometry helpers for the centering CV pipeline.
  *
- * These are kept free of OpenCV so they can be unit-tested directly. The OpenCV
- * wrapper (cv.ts) calls into these to order detected corners and derive
- * axis-aligned rectangles after perspective correction.
+ * These are kept free of external dependencies so they can be unit-tested directly.
+ * cv.ts calls into these to derive axis-aligned rectangles from detected corners.
  */
 
 import type { Rect } from "./centering";

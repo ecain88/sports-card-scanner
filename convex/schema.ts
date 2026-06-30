@@ -10,7 +10,7 @@ const saleListingValidator = v.object({
   imageUrl: v.string(),
 });
 
-// PSA-style centering measurement produced client-side by the OpenCV.js pipeline.
+// PSA-style centering measurement — borders detected by GPT-4.1 Vision (convex/borders.ts).
 const centeringValidator = v.object({
   lrLeftPct: v.number(),
   lrRightPct: v.number(),
