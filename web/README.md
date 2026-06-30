@@ -42,15 +42,15 @@ Convex deployment env (set via `npx convex env set` or the dashboard):
 | `EBAY_CLIENT_ID` | eBay Browse API (OAuth client credentials) |
 | `EBAY_CLIENT_SECRET` | eBay Browse API secret |
 
-GitHub Actions secrets (for `.github/workflows/deploy-web.yml`):
+## Deploy (Vercel Git integration)
 
-| Secret | Purpose |
-|---|---|
-| `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` | Vercel deploy |
-| `VITE_CONVEX_URL` | Build-time Convex URL |
+The PWA deploys via Vercel's native Git integration:
 
-## Deploy
+1. In the Vercel dashboard: **Add New → Project** and import the GitHub repo.
+2. Set **Root Directory** to `web` (the app is in this subdirectory).
+3. Add the environment variable **`VITE_CONVEX_URL`** = your Convex `.cloud` URL.
+4. Deploy. Every push to `main` auto-deploys; `web/vercel.json` configures the
+   Vite build, SPA rewrites, and service-worker caching headers.
 
-Push to `main` → GitHub Actions type-checks, tests, builds, and deploys `web/` to
-Vercel. The existing `deploy-convex.yml` workflow deploys the Convex backend
-separately on `convex/**` changes.
+The Convex backend deploys separately via `.github/workflows/deploy-convex.yml`
+on `convex/**` changes.
