@@ -1,15 +1,9 @@
 /// <reference types="vitest" />
-import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      "@convex": fileURLToPath(new URL("../convex", import.meta.url)),
-    },
-  },
   plugins: [
     react(),
     VitePWA({

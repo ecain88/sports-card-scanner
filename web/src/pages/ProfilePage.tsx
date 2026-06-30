@@ -1,11 +1,11 @@
 import { Authenticated, Unauthenticated, AuthLoading, useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { api } from "@convex/_generated/api";
+import { api, type CurrentUser } from "../lib/api";
 import { SignInForm } from "../components/SignInForm";
 
 function SignedIn() {
   const { signOut } = useAuthActions();
-  const user = useQuery(api.cards.getCurrentUser);
+  const user = useQuery(api.cards.getCurrentUser) as CurrentUser | null | undefined;
   return (
     <div className="card">
       <p style={{ marginTop: 0 }}>

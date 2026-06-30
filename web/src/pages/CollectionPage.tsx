@@ -1,10 +1,10 @@
 import { Authenticated, Unauthenticated, AuthLoading, useQuery } from "convex/react";
-import { api } from "@convex/_generated/api";
+import { api, type CollectionCard } from "../lib/api";
 import { formatRatio } from "../lib/centering";
 import { gradeVerdict } from "../lib/psa";
 
 function CardList() {
-  const cards = useQuery(api.cards.getCollection);
+  const cards = useQuery(api.cards.getCollection) as CollectionCard[] | undefined;
 
   if (cards === undefined) {
     return <div className="card"><p className="muted" style={{ margin: 0 }}>Loading your collection…</p></div>;
