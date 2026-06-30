@@ -10,7 +10,9 @@
 
 import type * as auth from "../auth.js";
 import type * as cards from "../cards.js";
+import type * as ebay from "../ebay.js";
 import type * as http from "../http.js";
+import type * as vision from "../vision.js";
 
 import type {
   ApiFromModules,
@@ -21,7 +23,9 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   cards: typeof cards;
+  ebay: typeof ebay;
   http: typeof http;
+  vision: typeof vision;
 }>;
 
 /**

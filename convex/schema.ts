@@ -10,6 +10,18 @@ const saleListingValidator = v.object({
   imageUrl: v.string(),
 });
 
+// PSA-style centering measurement produced client-side by the OpenCV.js pipeline.
+const centeringValidator = v.object({
+  lrLeftPct: v.number(),
+  lrRightPct: v.number(),
+  tbTopPct: v.number(),
+  tbBottomPct: v.number(),
+  worstLargerPct: v.number(),
+  supportedGradeFront: v.number(),
+  confidence: v.number(),
+  manualAdjusted: v.boolean(),
+});
+
 export default defineSchema({
   ...authTables,
   cards: defineTable({
@@ -32,5 +44,7 @@ export default defineSchema({
     lastSalePrice: v.optional(v.number()),
     lastSaleDate: v.optional(v.string()),
     saleListings: v.array(saleListingValidator),
+    centering: v.optional(centeringValidator),
+    isBorderless: v.optional(v.boolean()),
   }).index("by_user", ["userId"]),
 });

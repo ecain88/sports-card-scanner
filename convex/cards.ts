@@ -134,6 +134,37 @@ export const updateCardSales = mutation({
   },
 });
 
+export const updateCardCentering = mutation({
+  args: {
+    cardId: v.id("cards"),
+    isBorderless: v.boolean(),
+    centering: v.optional(
+      v.object({
+        lrLeftPct: v.number(),
+        lrRightPct: v.number(),
+        tbTopPct: v.number(),
+        tbBottomPct: v.number(),
+        worstLargerPct: v.number(),
+        supportedGradeFront: v.number(),
+        confidence: v.number(),
+        manualAdjusted: v.boolean(),
+      })
+    ),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const card = await ctx.db.get(args.cardId);
+    if (!card || card.userId !== userId) throw new Error("Not found");
+
+    await ctx.db.patch(args.cardId, {
+      isBorderless: args.isBorderless,
+      centering: args.centering,
+    });
+  },
+});
+
 export const deleteCard = mutation({
   args: { cardId: v.id("cards") },
   handler: async (ctx, args) => {
