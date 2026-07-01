@@ -1,6 +1,7 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 
+
 /** Normalized (0–1) rectangle coordinates relative to image dimensions. */
 interface NormalizedRect {
   left: number;
