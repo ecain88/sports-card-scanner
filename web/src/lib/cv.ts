@@ -8,8 +8,14 @@
  */
 
 import type { Rect } from "./centering";
-import { convex } from "./convexClient";
+import { convexHttp } from "./convexHttpClient";
 import { api } from "./api";
+
+const MAX_ATTEMPTS = 3;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export interface DetectionResult {
   outer: Rect;
@@ -51,8 +57,29 @@ export async function detectCardRects(
   const base64 = await fileToBase64(file);
   const mimeType = file.type || "image/jpeg";
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result = await convex.action((api as any).borders.detectBorders, { base64, mimeType });
+  let lastError: unknown;
+  let result: { ok: true; outer: NormalizedRect; inner: NormalizedRect; confidence: number; borderless: boolean } | { ok: false; error: string } | undefined;
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      result = await convexHttp.action((api as any).borders.detectBorders, { base64, mimeType });
+      break;
+    } catch (err) {
+      lastError = err;
+      const message = err instanceof Error ? err.message : String(err);
+      // Only retry on connection/network failures — not on real errors from the action itself.
+      const isTransient = /connection lost|network|fetch failed|timed out/i.test(message);
+      if (!isTransient || attempt === MAX_ATTEMPTS) {
+        throw err;
+      }
+      await sleep(500 * attempt);
+    }
+  }
+
+  if (!result) {
+    throw lastError instanceof Error ? lastError : new Error("Border detection failed after retries.");
+  }
 
   if (!result.ok) {
     throw new Error(result.error);
